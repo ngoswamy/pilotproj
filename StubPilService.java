@@ -1,4 +1,5 @@
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.stereotype.Service;
@@ -16,13 +17,14 @@ public class StubPilService implements PilService {
 	}
 	private static final Log logger = LogFactory.getLog(StubPilService.class);
     public void storeRecord(SalesforceRecord salesRecord) {
-    	/*Date createdDate = salesRecord.getCreatedDate();
-    	Date closeDate = salesRecord.getCloseDate();
-        logger.info("Feed Data [" + createdDate + "-" + closeDate + "] ");
-        */
+    	
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //'2008-7-04', '2008-7-06'
+    	String crDate= dateFormat.format(salesRecord.getCreatedDate());
+    	String clDate= dateFormat.format(salesRecord.getCloseDate());
+    	String isclosed = salesRecord.isClose() ? "TRUE" : "FALSE";
     	JdbcTemplate jt = new JdbcTemplate(dataSource); 
-        jt.execute("insert into salesforce (accountid, amount, createddate, closedate, isclosed, totalopportunityquantity, type) values('"+salesRecord.getAccountId()+"',"+salesRecord.getAmount()+", '2008-7-04', '2008-7-06', FALSE,"+salesRecord.getTotalOpportunityQuantity()+", '"+salesRecord.getType()+"')");
+        jt.execute("insert into salesforce (accountid, amount, createddate, closedate, isclosed, totalopportunityquantity, type) values('"+salesRecord.getAccountId()+"',"+salesRecord.getAmount()+", '"+crDate+"', '"+clDate+"', "+isclosed+","+salesRecord.getTotalOpportunityQuantity()+", '"+salesRecord.getType()+"')");
         logger.info("Insert Statement executed");
-
+        logger.info("insert into salesforce (accountid, amount, createddate, closedate, isclosed, totalopportunityquantity, type) values('"+salesRecord.getAccountId()+"',"+salesRecord.getAmount()+", '"+crDate+"', '"+clDate+"', "+isclosed+","+salesRecord.getTotalOpportunityQuantity()+", '"+salesRecord.getType()+"')");
     }
 }
